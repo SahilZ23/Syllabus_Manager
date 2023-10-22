@@ -4,11 +4,15 @@ from django.db import models
 # Create your models here.
 class PersonalInfo(models.Model):
     myName = models.CharField(max_length=40)
+    # Can have an Office
     officeLocation = models.CharField(max_length=20, null=True, blank=True)
+    # Can have an Office Number if Office is marked
     officeNumber = models.IntegerField(null=True, blank=True)
-    phoneNumber = models.CharField(max_length=40, null=True, blank=True)
-    email = models.CharField(max_length=30, null=True, blank=True)
+    phoneNumber = models.CharField(max_length=40, null=False, blank=True)
+    email = models.CharField(max_length=30, null=False, blank=True)
+    # Can have the days they are in office if they have declared an Office number
     day = models.CharField(max_length=50, null=True)
+    # The time they work during the bussiness days
     timeFrom = models.TimeField("Date Published", null=True)
     timeTo = models.TimeField("DatePublished", null=True)
 
@@ -21,6 +25,7 @@ class Courses(models.Model):
     courseNumber = models.IntegerField()  # courseNumber should be unique and no course will have the same courseNumber
     semester = models.CharField(max_length=40)  # Fall, Spring, Winter, and Summer semesters
     year = models.IntegerField()
+
     #section = models.IntegerField(unique=True)  # sections should also be unique for lecture, lab, discussion
     # https://stackoverflow.com/questions/2201598/how-to-define-two-fields-unique-as-couple
 
@@ -32,6 +37,11 @@ ROLES = (
     ("TA", "TA"),
     ("Instructor", "Instructor"),
     ("Admin", "Admin"),
+    ## TO IMPLEMENT
+    # ('SalesRep', 'SalesRep'),
+    # ('SalesAdmin', 'SalesAdmin'),
+    # ('HR', 'HR'),
+    # ('ops', 'ops')
 )
 
 
@@ -86,8 +96,34 @@ class Section(models.Model):
         return f"{self.courses.courseNumber} - {self.section_number}"
 
 
+## CustomerInfo Table
+class CustomerInfo(models.Model):
+    CustomerName = models.CharField(max_length=40)
+    CustomerAddress = models.CharField(max_length=20, null=True, blank=True)
+    CustomerPhoneNumber = models.CharField(max_length=40, null=True, blank=True)
+    CustomerEmail = models.CharField(max_length=30, null=True, blank=True)
 
+    def __str__(self):
+        return f"{self.CustomerName}"
 
+## ItemInfo
+class ItemInfo(models.Model):
+    ItemName = models.CharField(max_length=40)
+    ItemLocation = models.CharField(max_length=20, null=True, blank=True)
+    ItemNumber = models.IntegerField(null=False, blank=True)
+    ItemPrice = models.IntegerField(null=False, blank=True)
+    ItemQuantity = models.IntegerField(null=False, blank=True)
+
+    def __str__(self):
+        return f"{self.ItemName}"
+
+## Sales Data
+class SalesData(models.Model):
+    # We need the customer's sales data as foreign key to view it. 
+    Sales_Customer = models.ForeignKey(CustomerInfo, on_delete=models.CASCADE, blank=True, null=True)
+
+    def __str__(self) -> str:
+        return f"{self.Sales}"
 
 
 
